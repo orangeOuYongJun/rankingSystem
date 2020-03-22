@@ -1,2 +1,2 @@
-# rankingSystem
-FinalProject
+# RankingSystem
+FinalProject (Yuanxin Zhang && Yongjun Ou)
