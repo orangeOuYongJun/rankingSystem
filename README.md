@@ -1,5 +1,6 @@
 # Ranking System
-####Spring 2020 INFO 6205 FinalProject 
+**Spring 2020 INFO 6205 FinalProject**
+
 Yuanxin Zhang / Yongjun Ou  
 
 To develop a ranking system which is able to evaluate the following
