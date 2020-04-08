@@ -18,8 +18,6 @@ public class Team {
 		FTHG = fTHG;
 	}
 
-	private Integer FTAG;
-
 	public String getHomeTeam() {
 		return HomeTeam;
 	}
@@ -36,8 +34,9 @@ public class Team {
 		AwayTeam = awayTeam;
 	}
 
-	private Integer FTHG;
-	private String HomeTeam;
-	private String AwayTeam;
+	private Integer FTAG; // final goal away team
+	private Integer FTHG; // final goal home team
+	private String HomeTeam; // home team name
+	private String AwayTeam; // away team name
 
 }
