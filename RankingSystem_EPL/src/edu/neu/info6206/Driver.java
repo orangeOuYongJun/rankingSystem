@@ -30,7 +30,7 @@ public class Driver {
 
 	public static void jsonToModel() {
 		Gson gson = new GsonBuilder().create();
-		String string = readJsonFile("season-1819.json");
+		String string = readJsonFile("season-1619.json");
 		originalAllMatchesList = gson.fromJson(string, new TypeToken<List<Team>>() {
 		}.getType());
 
