@@ -76,7 +76,7 @@ public class Match {
     }
 
     public int getDiff() {
-		return teamAGoal - teamBGoal;
+		return teamAGoal - teamBGoal;  // A-B
 	}
 
     private double teamAWinProbability;
@@ -84,9 +84,6 @@ public class Match {
     private int matchCount;
     private int teamAGoal;
     private int teamBGoal;
-    private int diff; // A-B
-
-
 	private String teamA;
     private String teamB;
 }

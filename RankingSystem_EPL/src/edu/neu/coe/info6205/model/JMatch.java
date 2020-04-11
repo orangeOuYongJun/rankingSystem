@@ -39,6 +39,10 @@ public class JMatch {
     public void setAwayTeam(String awayTeam) {
         AwayTeam = awayTeam;
     }
+    
+    public int getDiff() {
+    	return FTHG - FTAG;
+    }
 
     private Integer FTAG; // Final Goal Away Team
     private Integer FTHG; // Final Goal Home Team

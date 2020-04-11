@@ -70,7 +70,7 @@ public class Driver {
         for (JMatch teamMatch : originalAllMatchesList) {
             teamA = teamMatch.getHomeTeam();
             teamB = teamMatch.getAwayTeam();
-			System.out.println(teamA + " " + teamB);
+//			System.out.println(teamA + " " + teamB);
 			
             for (Match match : myMatchList) {
 
@@ -121,28 +121,29 @@ public class Driver {
             int totalGoal = 0;
             int totalGoalDiff = 0;
             
-            for (Match match : myMatchList) {
-            	if (team.getTeamName().equals(match.getTeamA())) {
-            		totalGoal += match.getTeamAGoal();
-            		totalGoalDiff += match.getDiff();
-            		if (match.getDiff() > 0) totalMatchWin += 1;
-            		if (match.getDiff() < 0) totalMatchLose += 1;
-            		if (match.getDiff() == 0) totalMatchTie += 1;
+            for (JMatch jMatch : originalAllMatchesList) {
+            	if (team.getTeamName().equals(jMatch.getHomeTeam())) {
+            		totalGoal += jMatch.getFTHG();
+            		totalGoalDiff += jMatch.getDiff();
+            		if (jMatch.getDiff() > 0) totalMatchWin += 1;
+            		if (jMatch.getDiff() < 0) totalMatchLose += 1;
+            		if (jMatch.getDiff() == 0) totalMatchTie += 1;
             		
             		
             		matchNumCount +=1;
-            		if(matchNumCount == 19) break;
+            		if(matchNumCount == 38) break;
             	}
-            	if (team.getTeamName().equals(match.getTeamB())) {
-            		totalGoal += match.getTeamBGoal();
-            		totalGoalDiff -= match.getDiff();
+            	if (team.getTeamName().equals(jMatch.getAwayTeam())) {
+            		totalGoal += jMatch.getFTAG();
+            		totalGoalDiff -= jMatch.getDiff();
             		
-            		if (match.getDiff() < 0) totalMatchWin += 1;
-            		if (match.getDiff() > 0) totalMatchLose += 1;
-            		if (match.getDiff() == 0) totalMatchTie += 1;
+            		if (jMatch.getDiff() < 0) totalMatchWin += 1;
+            		if (jMatch.getDiff() > 0) totalMatchLose += 1;
+            		if (jMatch.getDiff() == 0) totalMatchTie += 1;
             		
             		matchNumCount +=1;
-            		if(matchNumCount == 19) break;
+            		if(matchNumCount == 38
+            				) break;
             	}
             }
             team.setTotalMatchWin(totalMatchWin);
@@ -154,7 +155,10 @@ public class Driver {
 			allTeams.add(team);
         }
         
-        System.out.print(allTeams.toString());
+        
+        rankInTotalMatchWin(allTeams);
+        
+        System.out.print(allTeams.toString());    
         
         
         
@@ -186,8 +190,36 @@ public class Driver {
     
     
     
-    public static void rankInTotalMatchWin() {
-    	
+    public static void rankInTotalMatchWin(List<Team> team) {
+    	sort(team, 0, team.size()-1);
+    }
+    
+    
+    
+    public static void sort(List<Team> t, int low, int high) {
+        int i, j;
+        if (low > high) {
+            return;
+        }
+        i = low;
+        j = high;
+        
+        Team iTeam = t.get(i); // use the first record as the pivot
+        while (i < j) { // scan from two sides
+            while (i < j && t.get(j).getTotalMatchWin() <= iTeam.getTotalMatchWin())
+                j--;
+            if (i < j)
+            	t.set(i++, t.get(j));// replace the lower position with larger record
+            while (i < j && t.get(i).getTotalMatchWin() > iTeam.getTotalMatchWin())
+                i++;
+            if (i < j) 
+            	t.set(j--, t.get(i)); // replace the higher position with smaller record
+        }
+        t.set(i, iTeam); // use pivot replace the i position record
+        
+        sort(t, low, i - 1); // recurse lower part
+        sort(t, i + 1, high); // recurse higher part
+
     }
     
     public static void rankInTotalGoal() {
