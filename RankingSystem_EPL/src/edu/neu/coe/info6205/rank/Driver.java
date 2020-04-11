@@ -157,7 +157,10 @@ public class Driver {
         
         
         rankInTotalMatchWin(allTeams);
+//        System.out.print(allTeams.toString());    
         
+        
+        rankInTotalGoalDiff(allTeams);
         System.out.print(allTeams.toString());    
         
         
@@ -191,12 +194,10 @@ public class Driver {
     
     
     public static void rankInTotalMatchWin(List<Team> team) {
-    	sort(team, 0, team.size()-1);
+    	sortMatchWins(team, 0, team.size()-1);
     }
     
-    
-    
-    public static void sort(List<Team> t, int low, int high) {
+    public static void sortMatchWins(List<Team> t, int low, int high) {
         int i, j;
         if (low > high) {
             return;
@@ -217,13 +218,39 @@ public class Driver {
         }
         t.set(i, iTeam); // use pivot replace the i position record
         
-        sort(t, low, i - 1); // recurse lower part
-        sort(t, i + 1, high); // recurse higher part
+        sortMatchWins(t, low, i - 1); // recurse lower part
+        sortMatchWins(t, i + 1, high); // recurse higher part
 
     }
     
-    public static void rankInTotalGoal() {
-    	
+    public static void rankInTotalGoalDiff(List<Team> team) {
+    	sortGoalDiffs(team, 0, team.size()-1);
+    }
+    
+    public static void sortGoalDiffs(List<Team> t, int low, int high) {
+        int i, j;
+        if (low > high) {
+            return;
+        }
+        i = low;
+        j = high;
+        
+        Team iTeam = t.get(i); // use the first record as the pivot
+        while (i < j) { // scan from two sides
+            while (i < j && t.get(j).getTotalGoalDiff() <= iTeam.getTotalGoalDiff())
+                j--;
+            if (i < j)
+            	t.set(i++, t.get(j));// replace the lower position with larger record
+            while (i < j && t.get(i).getTotalGoalDiff() > iTeam.getTotalGoalDiff())
+                i++;
+            if (i < j) 
+            	t.set(j--, t.get(i)); // replace the higher position with smaller record
+        }
+        t.set(i, iTeam); // use pivot replace the i position record
+        
+        sortGoalDiffs(t, low, i - 1); // recurse lower part
+        sortGoalDiffs(t, i + 1, high); // recurse higher part
+
     }
     
     public static void getPossibilityPairs() {
