@@ -78,6 +78,13 @@ public class Match {
     public int getDiff() {
 		return teamAGoal - teamBGoal;  // A-B
 	}
+    
+    @Override
+	public String toString() {
+		return "[" + teamA +" : " + teamB + " = " + teamAGoal + " : " + teamBGoal + "  ("
+				+ teamAWinProbability + " : " + teamBWinProbability + ") " + "\n";
+	}
+    
 
     private double teamAWinProbability;
     private double teamBWinProbability;

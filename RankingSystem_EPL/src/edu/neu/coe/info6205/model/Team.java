@@ -3,6 +3,8 @@
  */
 package edu.neu.coe.info6205.model;
 
+import java.util.HashMap;
+
 /**
  * @author Yuanxin
  *
@@ -49,11 +51,17 @@ public class Team {
 	
 	@Override
 	public String toString() {
-		return "[ " + teamName +", " + totalMatchWin + ", " + 
+		return "[" + teamName +", " + totalMatchWin + ", " + 
 				totalMatchLose + ", " + totalMatchTie + ", " + 
 				totalGoal + ", " + totalGoalDiff + "] " + "\n";
 	}
 	
+	
+	public HashMap<String, Double> getWinMap() {
+		return winMap;
+	}
+
+	private HashMap<String, Double> winMap = new HashMap<>();
 	private int totalMatchWin;
 	private int totalMatchLose;
 	private int totalMatchTie;

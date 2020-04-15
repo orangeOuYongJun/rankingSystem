@@ -11,7 +11,6 @@ import edu.neu.coe.info6205.model.Team;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -39,7 +38,6 @@ public class Driver {
         
         int sumGA = 0;
         int sumGB = 0;
-        int goalDiff = 0; // difference = |sumGB - sumGA|
         int matchCount = 0;
         
 //		Create a arraylist to store all the teams' name
@@ -129,9 +127,8 @@ public class Driver {
             		if (jMatch.getDiff() < 0) totalMatchLose += 1;
             		if (jMatch.getDiff() == 0) totalMatchTie += 1;
             		
-            		
             		matchNumCount +=1;
-            		if(matchNumCount == 38) break;
+            		if(matchNumCount == MATCH_PER_TEAM) break;
             	}
             	if (team.getTeamName().equals(jMatch.getAwayTeam())) {
             		totalGoal += jMatch.getFTAG();
@@ -142,8 +139,7 @@ public class Driver {
             		if (jMatch.getDiff() == 0) totalMatchTie += 1;
             		
             		matchNumCount +=1;
-            		if(matchNumCount == 38
-            				) break;
+            		if(matchNumCount == MATCH_PER_TEAM) break;
             	}
             }
             team.setTotalMatchWin(totalMatchWin);
@@ -151,6 +147,21 @@ public class Driver {
             team.setTotalMatchTie(totalMatchTie);
 			team.setTotalGoal(totalGoal);
 			team.setTotalGoalDiff(totalGoalDiff);
+			
+			matchNumCount = 0; // Initialize the temporary variable
+			for (Match match: myMatchList) {
+				if(team.getTeamName().equals(match.getTeamA())) {
+					team.getWinMap().put(match.getTeamB(), match.getTeamAWinProbability());
+					matchNumCount +=1;
+					if(matchNumCount == MATCH_PER_TEAM_OPPONENT) break;
+				}
+				
+				if(team.getTeamName().equals(match.getTeamB())) {
+					team.getWinMap().put(match.getTeamA(), match.getTeamBWinProbability());
+					matchNumCount +=1;
+					if(matchNumCount == MATCH_PER_TEAM_OPPONENT) break;
+				}
+			}
 			
 			allTeams.add(team);
         }
@@ -161,37 +172,18 @@ public class Driver {
         
         
         rankInTotalGoalDiff(allTeams);
-        System.out.print(allTeams.toString());    
+        System.out.println(allTeams.toString());    
         
         
+        System.out.println("This is the table for " + allTeams.get(1).getTeamName() + ":  ");
+        for (String key:allTeams.get(1).getWinMap().keySet()) {
+            System.out.println(key+" "+ allTeams.get(1).getWinMap().get(key));
+        }
         
-//        
-//        
-////      Output test
-//        for (Match match : myMatchList) {
-//        	System.out.print(match.getTeamAWinProbability() + " " + 
-//        			match.getTeamBWinProbability() + " " + 
-//        			match.getTeamTieProbability());
-//        	System.out.println();
-//        }
-//        System.out.println("=====================");
-//        
-////      Output test
-//        for (Match match : myMatchList) {
-//        	System.out.print(match.getTeamAGoal()+ " " +
-//        			match.getTeamBGoal());
-//        	System.out.println();
-//        }
-//        System.out.println("=====================");
+        //System.out.print(myMatchList.toString());    
         
     }
 
-    
-    
-    
-    
-    
-    
     
     public static void rankInTotalMatchWin(List<Team> team) {
     	sortMatchWins(team, 0, team.size()-1);
@@ -338,6 +330,8 @@ public class Driver {
         }
         return sum * c;
     }
-
+    
+    private static final int MATCH_PER_TEAM_OPPONENT = 19;
+    private static final int MATCH_PER_TEAM= 38;
     private static List<JMatch> originalAllMatchesList = new ArrayList<JMatch>();
 }
