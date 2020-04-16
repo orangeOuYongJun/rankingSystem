@@ -188,16 +188,47 @@ public class Driver {
 		Collections.sort(allTeams, Comparator.comparing(Team::getTranScore).reversed());
 		System.out.println(allTeams.toString());
 
-		System.out.println("This is the table for " + allTeams.get(1).getTeamName() + ":  ");
-		for (String key : allTeams.get(1).getWinMap().keySet()) {
-			System.out.println(key + " " + allTeams.get(1).getWinMap().get(key));
-		}
-
+		outPutAllTeamPairsResult(allTeams);
 		// System.out.print(myMatchList.toString());
 
-//		write csv sort result
-		String[] headStrings = new String[] { "asdf", "ajodf" };
-		writeCSVFile(allTeams);
+//		write csv final table
+		writeCSVFile(allTeams, "./FinaGames.csv",
+				new String[] { "TeamName", "Win", "Tie", "Lose", "TranScore(W*1+T*0.5*L*0)" });
+	}
+
+	public static void outPutAllTeamPairsResult(List<Team> allTeams) {
+
+		for (Team team : allTeams) {
+//			System.out.println("\nThis is the table for " + team.getTeamName() + ":  ");
+//			for (String key : team.getWinMap().keySet()) {
+//				System.out.println(key + " " + team.getWinMap().get(key));
+//			}
+			StringBuilder fileNameString = new StringBuilder("./");
+			fileNameString.append(team.getTeamName());
+			fileNameString.append(".csv");
+			writeCSVFile(team, fileNameString.toString(), new String[] { "TeamName", "Win Probability" });
+		}
+	}
+
+	/**
+	 * write output team pairs
+	 * 
+	 * @param allTeams
+	 */
+	public static void writeCSVFile(Team team, String FILE_NAME, String[] FILE_HEADER) {
+
+		CSVFormat format = CSVFormat.DEFAULT.withHeader(FILE_HEADER);
+
+		try (Writer out = new FileWriter(FILE_NAME); CSVPrinter printer = new CSVPrinter(out, format)) {
+			for (String key : team.getWinMap().keySet()) {
+				List<String> records = new ArrayList<>();
+				records.add(key);
+				records.add(String.valueOf(team.getWinMap().get(key)));
+				printer.printRecord(records);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -205,12 +236,8 @@ public class Driver {
 	 * 
 	 * @param allTeams
 	 */
-	public static void writeCSVFile(List<Team> allTeams) {
+	public static void writeCSVFile(List<Team> allTeams, String FILE_NAME, String[] FILE_HEADER) {
 
-		final String[] FILE_HEADER = { "TeamName", "Win", "Tie", "Lose", "TranScore(W*1+T*0.5*L*0)" };
-		final String FILE_NAME = "./FinaGames.csv";
-
-		// 这里显式地配置一下CSV文件的Header，然后设置跳过Header（要不然读的时候会把头也当成一条记录）
 		CSVFormat format = CSVFormat.DEFAULT.withHeader(FILE_HEADER);
 
 		try (Writer out = new FileWriter(FILE_NAME); CSVPrinter printer = new CSVPrinter(out, format)) {
