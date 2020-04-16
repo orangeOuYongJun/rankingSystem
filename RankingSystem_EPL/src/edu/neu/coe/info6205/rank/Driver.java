@@ -36,7 +36,7 @@ public class Driver {
 
 	public static void jsonToModel() {
 		Gson gson = new GsonBuilder().create();
-		String string = readJsonFile("season-1819.json"); // read the json data file
+		String string = readJsonFile("season-1920.json"); // read the json data file
 		originalAllMatchesList = gson.fromJson(string, new TypeToken<List<JMatch>>() {
 		}.getType()); // get the list of all matches
 
