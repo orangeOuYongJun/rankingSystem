@@ -36,7 +36,7 @@ public class Driver {
 
 	public static void jsonToModel() {
 		Gson gson = new GsonBuilder().create();
-		String string = readJsonFile("season-1920.json"); // read the json data file
+		String string = readJsonFile("season-1819.json"); // read the json data file
 		originalAllMatchesList = gson.fromJson(string, new TypeToken<List<JMatch>>() {
 		}.getType()); // get the list of all matches
 
@@ -163,14 +163,16 @@ public class Driver {
 			matchNumCount = 0; // Initialize the temporary variable
 			for (Match match : myMatchList) {
 				if (team.getTeamName().equals(match.getTeamA())) {
-					team.getWinMap().put(match.getTeamB(), match.getTeamAWinProbability());
+					double winPlusTie =  match.getTeamAWinProbability() + match.getTeamTieProbability();
+					team.getWinMap().put(match.getTeamB(), winPlusTie);
 					matchNumCount += 1;
 					if (matchNumCount == MATCH_PER_TEAM_OPPONENT)
 						break;
 				}
 
 				if (team.getTeamName().equals(match.getTeamB())) {
-					team.getWinMap().put(match.getTeamA(), match.getTeamBWinProbability());
+					double winPlusTie = match.getTeamBWinProbability() + match.getTeamTieProbability();
+					team.getWinMap().put(match.getTeamA(), winPlusTie);
 					matchNumCount += 1;
 					if (matchNumCount == MATCH_PER_TEAM_OPPONENT)
 						break;
@@ -180,20 +182,27 @@ public class Driver {
 			allTeams.add(team);
 		}
 
-//        rankInTotalMatchWin(allTeams);
-//        System.out.print(allTeams.toString());    
+        rankInTotalMatchWin(allTeams);
+        writeCSVFile(allTeams, "./FinaGames_MatchWon.csv",
+				new String[] { "TeamName", "Win", "Tie", "Lose", "GoalDifference", "TranScore(W*1+T*0.5*L*0)"});
+        
+        System.out.print(allTeams.toString());    
 
-//        rankInTotalGoalDiff(allTeams);
+        rankInTotalGoalDiff(allTeams);
+        writeCSVFile(allTeams, "./FinaGames_GoalDiff.csv",
+				new String[] { "TeamName", "Win", "Tie", "Lose", "GoalDifference", "TranScore(W*1+T*0.5*L*0)"});
+        
 //		sort criteria S = win * 1 + tie * 0.5 + 0 * fail
-		Collections.sort(allTeams, Comparator.comparing(Team::getTranScore).reversed());
-		System.out.println(allTeams.toString());
+//		Collections.sort(allTeams, Comparator.comparing(Team::getTranScore).reversed());
 
+        rankInTranScore(allTeams);
 		outPutAllTeamPairsResult(allTeams);
 		// System.out.print(myMatchList.toString());
+		
 
 //		write csv final table
-		writeCSVFile(allTeams, "./FinaGames.csv",
-				new String[] { "TeamName", "Win", "Tie", "Lose", "TranScore(W*1+T*0.5*L*0)" });
+		writeCSVFile(allTeams, "./FinaGames_TranScore.csv",
+				new String[] { "TeamName", "Win", "Tie", "Lose", "GoalDifference", "TranScore(W*1+T*0.5*L*0)" });
 	}
 
 	public static void outPutAllTeamPairsResult(List<Team> allTeams) {
@@ -247,6 +256,7 @@ public class Driver {
 				records.add(String.valueOf(team.getTotalMatchWin()));
 				records.add(String.valueOf(team.getTotalMatchTie()));
 				records.add(String.valueOf(team.getTotalMatchLose()));
+				records.add(String.valueOf(team.getTotalGoalDiff()));
 				records.add(String.valueOf(team.getTranScore()));
 				printer.printRecord(records);
 			}
@@ -284,6 +294,8 @@ public class Driver {
 		sortMatchWins(t, i + 1, high); // recurse higher part
 
 	}
+	
+	
 
 	public static void rankInTotalGoalDiff(List<Team> team) {
 		sortGoalDiffs(team, 0, team.size() - 1);
@@ -315,7 +327,33 @@ public class Driver {
 
 	}
 
-	public static void getPossibilityPairs() {
+	public static void rankInTranScore(List<Team> team) {
+		sortTranScore(team, 0, team.size() - 1);
+	}
+
+	public static void sortTranScore(List<Team> t, int low, int high) {
+		int i, j;
+		if (low > high) {
+			return;
+		}
+		i = low;
+		j = high;
+
+		Team iTeam = t.get(i); // use the first record as the pivot
+		while (i < j) { // scan from two sides
+			while (i < j && t.get(j).getTranScore() <= iTeam.getTranScore())
+				j--;
+			if (i < j)
+				t.set(i++, t.get(j));// replace the lower position with larger record
+			while (i < j && t.get(i).getTranScore() > iTeam.getTranScore())
+				i++;
+			if (i < j)
+				t.set(j--, t.get(i)); // replace the higher position with smaller record
+		}
+		t.set(i, iTeam); // use pivot replace the i position record
+
+		sortTranScore(t, low, i - 1); // recurse lower part
+		sortTranScore(t, i + 1, high); // recurse higher part
 
 	}
 
